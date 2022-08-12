@@ -1,10 +1,86 @@
 #include "types.h"
 #include "dict.h"
 #include "array.h"
+#include <math.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 
+//Static functions declarations 
+static size_t get_element_string_representation_size(element e);
+
+//Function definitions:
+char *T_to_string(T_element e)
+/*
+ * Description: this function returns a allocated string with the string representation
+ * for the element 'e'. The user must free the returned string after using it.
+ * This function has a debugging purpose.
+ */
+{
+	//Variables:
+	char *result;
+	char *error_msg;
+    char *tmp_str;
+    size_t string_size = get_element_string_representation_size(e);
+    T_element tmp_element;
+    int i;
+
+    /* Allocate memory for the string representation */
+    result = calloc(string_size + 1, sizeof *result);
+    if (!result)
+    {
+        error_msg = "calloc: error while allocating memory for string_size";
+        goto error;
+    }
+
+
+	//Compare the values:
+	switch (e.type)
+	{
+		case UNSIGNED_INTEGER:
+            snprintf(result, string_size + 1, "%u", e.value.u_i);
+			break;
+		case INTEGER:
+            snprintf(result, string_size + 1, "%d", e.value.i);
+			break;
+		case FLOATING_POINT:
+            snprintf(result, string_size + 1, "%f", e.value.f_p);
+			break;
+		case BOOL:
+            snprintf(result, string_size + 1, "%s", e.value.b ? "true":"false");
+			break;
+		case CHAR:
+            snprintf(result, string_size + 1, "%c", e.value.c);
+			break;
+		case STRING:
+            snprintf(result, string_size + 1, "%s", e.value.str->str);
+			break;
+		case ARRAY:
+            result[0] = '\0';
+            for(i = 0; i < A_get_length(e); i++)
+            {
+                tmp_element = A_get_element_at_index(i, e);
+                tmp_str = T_to_string(tmp_element);
+                strncat(result, tmp_str, string_size - strlen(result));
+                free(tmp_str);
+                tmp_str = NULL;
+            }
+            break;
+		case NULL_TYPE:
+            snprintf(result, string_size + 1, "NULL");
+			break;
+		default:
+			error_msg = "T_to_string() is not implemented for the desired type.";
+			goto error;
+			break;
+			
+	}
+	return result;
+
+error:
+	fprintf(stderr, error_msg);
+	exit(EXIT_FAILURE);
+}
 
 bool T_is_equal(T_element e1, T_element e2)
 /**
@@ -42,11 +118,11 @@ bool T_is_equal(T_element e1, T_element e2)
 			result = (e1.value.b == e2.value.b);
 			break;
 		case ARRAY:
-            if (e1.length != e2.length) result = false;
+            if (A_get_length(e1) != A_get_length(e2)) result = false;
             else 
             {
                 result = true;
-                for(i = 0; i < e1.length; i++)
+                for(i = 0; i < A_get_length(e1); i++)
                 {
                     if(!T_is_equal(A_get_element_at_index(i, e1), A_get_element_at_index(i, e2))
                     {
@@ -74,6 +150,7 @@ error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
 }
+
 
 void T_free_element(T_element *e)
 {
@@ -124,6 +201,60 @@ void T_free_element(T_element *e)
 result:
 	return;
 
+error:
+	fprintf(stderr, error_msg);
+	exit(EXIT_FAILURE);
+}
+
+/*Static functions definitions*/
+static size_t get_element_string_representation_size(element e)
+/*
+ * Description: this function calculates the number of chars necessary to represent
+ * 'e' as a string.
+ */
+{
+	//Variables:
+	size_t result;
+	char *error_msg;
+
+	//Compare the values:
+	switch (e.type)
+	{
+		case UNSIGNED_INTEGER:
+			result = (size_t) log10((double) e.value.u_i);
+			break;
+		case INTEGER:
+			result = (size_t) log10((double) e.value.i);
+			break;
+		case FLOATING_POINT:
+			result = 40; //Graranteedly greater than the maximum
+			break;
+		case BOOL:
+			result = sizeof "false" - 1;
+			break;
+		case CHAR:
+			result = 1;
+			break;
+		case STRING:
+			result = e.value.str->length;
+			break;
+		case ARRAY:
+            result = 0;
+            for(i = 0; i < A_get_length(e); i++)
+            {
+                result += get_element_string_representation_size(A_get_element_at_index(i, e1))
+            }
+            break;
+		case NULL_TYPE:
+			result = sizeof "NULL" - 1;
+			break;
+		default:
+			error_msg = "Not able to calculate the size of the string representation for the given element.";
+			goto error;
+			break;
+			
+	}
+	return result;
 error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
