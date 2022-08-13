@@ -224,10 +224,10 @@ static size_t get_element_string_representation_size(T_element e)
 	switch (e.type)
 	{
 		case UNSIGNED_INTEGER:
-			result = (size_t) log10((double) e.value.u_i);
+			result = (size_t) log10((double) e.value.u_i) + 1;
 			break;
 		case INTEGER:
-			result = (size_t) log10((double) e.value.i);
+			result = (size_t) log10((double) e.value.i) + 1;
 			break;
 		case FLOATING_POINT:
 			result = 40; //Graranteedly greater than the maximum
