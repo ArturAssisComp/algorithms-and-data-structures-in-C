@@ -5,6 +5,7 @@
 #include "types.h"
 #include <stdlib.h>
 
+
 //Declarations of functions:
 T_element A_create_array(size_t sz);
 void      A_delete_array(T_element *e);
