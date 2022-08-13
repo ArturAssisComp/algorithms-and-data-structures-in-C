@@ -56,3 +56,24 @@ error:
 	exit(EXIT_FAILURE);
 }
 
+size_t A_get_length(T_element e)
+/**
+ * Description: this function returns the length of the element of type array.
+ * If the element is not an array, an error is raised.
+ */
+{
+	//Variables:
+	char *error_msg;
+
+    if(e.type != ARRAY)
+    {
+        error_msg = "This function can not be called to an element that is not array.";
+        goto error;
+    }
+
+	return e.value.arr->length;
+
+error:
+	fprintf(stderr, error_msg);
+	exit(EXIT_FAILURE);
+}
