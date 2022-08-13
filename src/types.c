@@ -1,5 +1,4 @@
 #include "types.h"
-#include "dict.h"
 #include "array.h"
 #include <math.h>
 #include <stdbool.h>
@@ -7,7 +6,7 @@
 #include <stdio.h>
 
 //Static functions declarations 
-static size_t get_element_string_representation_size(element e);
+static size_t get_element_string_representation_size(T_element e);
 
 //Function definitions:
 char *T_to_string(T_element e)
@@ -95,9 +94,10 @@ bool T_is_equal(T_element e1, T_element e2)
 	//Variables:
 	bool result;
 	char *error_msg;
+    int i;
 
 	//Check if they have different type:
-	if (e1.type != e2.type) return result false;
+	if (e1.type != e2.type) return false;
 
 	//Compare the values:
 	switch (e1.type)
@@ -124,7 +124,7 @@ bool T_is_equal(T_element e1, T_element e2)
                 result = true;
                 for(i = 0; i < A_get_length(e1); i++)
                 {
-                    if(!T_is_equal(A_get_element_at_index(i, e1), A_get_element_at_index(i, e2))
+                    if(!T_is_equal(A_get_element_at_index(i, e1), A_get_element_at_index(i, e2)))
                     {
                         result = false;
                         break;
@@ -152,6 +152,7 @@ error:
 }
 
 
+/*
 void T_free_element(T_element *e)
 {
 	//Variables:
@@ -205,9 +206,10 @@ error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
 }
+*/
 
 /*Static functions definitions*/
-static size_t get_element_string_representation_size(element e)
+static size_t get_element_string_representation_size(T_element e)
 /*
  * Description: this function calculates the number of chars necessary to represent
  * 'e' as a string.
@@ -216,6 +218,7 @@ static size_t get_element_string_representation_size(element e)
 	//Variables:
 	size_t result;
 	char *error_msg;
+    int i;
 
 	//Compare the values:
 	switch (e.type)
@@ -242,7 +245,7 @@ static size_t get_element_string_representation_size(element e)
             result = 0;
             for(i = 0; i < A_get_length(e); i++)
             {
-                result += get_element_string_representation_size(A_get_element_at_index(i, e1))
+                result += get_element_string_representation_size(A_get_element_at_index(i, e));
             }
             break;
 		case NULL_TYPE:

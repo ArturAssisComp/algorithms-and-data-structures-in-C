@@ -60,31 +60,34 @@ typedef struct
         struct T_linked_list *lk;
         struct T_stack *stck;
         struct T_dict *dct;
-        struct T_set *set
+        struct T_set *set;
     } value;
     T_data_type type;
 }T_element;
 
 
-typedef struct
+struct T_string
 {
     char *str;
     size_t length;
     size_t capacity;
-}T_string;
+};
+typedef struct T_string T_string;
 
-typedef struct
+struct T_array
 {
     T_element *array;
     size_t length;
-} T_array;
+};
+typedef struct T_array T_array;
 
-typedef struct
+struct T_vector
 {
     T_element *vector;
     size_t length;
     size_t capacity;
-} T_vector;
+};
+typedef struct T_vector T_vector;
 
 
 struct T_linked_list_element 
@@ -92,31 +95,34 @@ struct T_linked_list_element
     T_element element;
     struct T_linked_list_element *next_element;
 };
-typedef struct T_linked_list_element; 
+typedef struct T_linked_list_element T_linked_list_element; 
 
-typedef struct 
+struct T_linked_list 
 {
     T_linked_list_element *head;
     size_t length;
-}T_linked_list;
+};
+typedef struct T_linked_list T_linked_list;
 
-typedef struct
+struct T_stack
 {
     T_linked_list *aux_linked_list;
-}T_stack;
+};
+typedef struct T_stack T_stack;
 
-typedef struct 
+struct T_dict
 {
         struct T_linked_list *table;
         size_t table_length;
         size_t num_of_items;
-}T_dict;
+};
+typedef struct T_dict T_dict;
 
-typedef struct
+struct T_set
 {
     T_dict *dict;
-}T_set;
-
+};
+typedef struct T_set T_set;
 
 //Function declarations:
 char *T_to_string(T_element e);
