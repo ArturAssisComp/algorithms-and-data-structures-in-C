@@ -154,12 +154,9 @@ bool T_is_equal(T_element e1, T_element e2)
 		case NULL_TYPE:
 			result = true;
 			break;
-		case FLOATING_POINT:
-		case DICT:
+		default:
 			error_msg = "Comparison for equality is not implemented.";
 			goto error;
-			break;
-		default:
 			break;
 			
 	}
