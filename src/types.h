@@ -23,6 +23,8 @@ typedef enum
     STACK,
     DICT,  //Dict of generic elements
     SET,
+    //Special type
+    GENERIC,
     NULL_TYPE
 } T_data_type;
 
@@ -44,6 +46,7 @@ struct T_linked_list;
 struct T_stack;
 struct T_dict;
 struct T_set;
+struct T_generic;
 
 //Define the basic data structure element
 typedef struct 
@@ -61,6 +64,7 @@ typedef struct
         struct T_stack *stck;
         struct T_dict *dct;
         struct T_set *set;
+        struct T_generic *gen;
     } value;
     T_data_type type;
 }T_element;
@@ -123,6 +127,15 @@ struct T_set
     T_dict *dict;
 };
 typedef struct T_set T_set;
+
+
+struct T_generic
+{
+    void *gen; //The user must cast this object before using it.
+    size_t code; //This code an be used by the user to customize the behavior of this generic object.
+    bool memory_allocated; //If true, gen will be freed in the G_delete_generics function.
+};
+typedef struct T_generic T_generic;
 
 //Function declarations:
 void T_print(char *prefix, T_element e, char *suffix);
