@@ -51,7 +51,7 @@ char *T_to_string(T_element e)
             snprintf(result, string_size + 1, "%d", e.value.i);
 			break;
 		case FLOATING_POINT:
-            snprintf(result, string_size + 1, "%f", e.value.f_p);
+            snprintf(result, string_size + 1, "%g", e.value.f_p);
 			break;
 		case BOOL:
             snprintf(result, string_size + 1, "%s", e.value.b ? "true":"false");
@@ -250,7 +250,7 @@ static size_t get_element_string_representation_size(T_element e)
 			break;
 		case INTEGER:
             if(e.value.i == 0) result = 1;
-            else result = (size_t) log10((double) (e.value.i > 0 ? e.value.i : - e.value.i)) + 1;
+            else result = (size_t) log10((double) (e.value.i > 0 ? e.value.i : - e.value.i)) + 2;
 			break;
 		case FLOATING_POINT:
 			result = 40; //Guaranteedly greater than the maximum
