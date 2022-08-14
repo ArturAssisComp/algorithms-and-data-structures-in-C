@@ -5,10 +5,9 @@
 
 /*
 T_element A_create_array(size_t sz);
-void      A_delete_array(T_array *e);
 size_t    A_get_length(T_element e);
-T_element A_get_element_at_index(size_t i, T_element e);
-void      A_set_element_at_index(size_t i, T_element e);
+T_element A_get_element_at_index(size_t i, T_element e_array);
+void      A_set_element_at_index(size_t i, T_element element, T_element e_array)
 */
 
 
@@ -87,6 +86,9 @@ void A_delete_array(T_array **p_arr)
 
     free(arr->array);
     free(arr);
+
+
+    return;
 error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
@@ -114,10 +116,10 @@ error:
 	exit(EXIT_FAILURE);
 }
 
-T_element A_get_element_at_index(size_t i, T_element e)
+T_element A_get_element_at_index(size_t i, T_element e_array)
 /*
  * Description: this function returns the element in the position i
- * from the T_element of type ARRAY "e". If the element is not of type
+ * from the T_element of type ARRAY "e_array". If the element is not of type
  * ARRAY, an error is raised and the function exits.
  * Index i must be between 0 <= i < length of 'e';
  */
@@ -126,20 +128,53 @@ T_element A_get_element_at_index(size_t i, T_element e)
     T_element result;
 	char *error_msg;
 
-    if(e.type != ARRAY)
+    if(e_array.type != ARRAY)
     {
         error_msg = "This function can not be called to an element that is not array.";
         goto error;
     }
 
-    if(i >= e.value.arr->length)
+    if(i >= e_array.value.arr->length)
     {
         error_msg = "Index out of bounds.";
         goto error;
     }
 
-	return e.value.arr->array[i];
+	return e_array.value.arr->array[i];
 
+error:
+	fprintf(stderr, error_msg);
+	exit(EXIT_FAILURE);
+}
+
+
+void A_set_element_at_index(size_t i, T_element element, T_element e_array)
+/*
+ * Description: this function sets and element at index i of element ARRAY 'e_array' to 'element'.
+ * If the type of 'e_array' is not ARRAY, and error is raised and the function exits.
+ */    
+{
+	//Variables:
+	char *error_msg;
+
+    if(e_array.type != ARRAY)
+    {
+        error_msg = "This function can not be called to an element that is not array.";
+        goto error;
+    }
+
+    if(i >= e_array.value.arr->length)
+    {
+        error_msg = "Index out of bounds.";
+        goto error;
+    }
+
+    if(e_array.value.arr->array[i].type != NULL_TYPE) T_free_element(&(e_array.value.arr->array[i]));
+
+    //set 
+    e_array.value.arr->array[i] = element;
+
+    return;
 error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
