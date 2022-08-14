@@ -152,8 +152,11 @@ error:
 }
 
 
-/*
 void T_free_element(T_element *e)
+/*
+ * Description: this function must be called after using a group element to free
+ * the allocated memory. For individual elements, it is optional.
+ */
 {
 	//Variables:
 	char *error_msg;
@@ -163,23 +166,18 @@ void T_free_element(T_element *e)
 	//Free the values:
 	switch (e->type)
 	{
+        //Individual elements:
 		case UNSIGNED_INTEGER:
 		case INTEGER:
-		case CHAR:
-		case STRING:
-		case BOOL:
 		case FLOATING_POINT:
+		case BOOL:
+		case CHAR:
 			e->type = NULL_TYPE;
 			break;
-		case DICT:
-			e->type = NULL_TYPE;
-			D_delete_dict(&(e->value.dct));
-			if(e->value.dct)
-			{
-				error_msg = "Problems while deleting the dict.";
-				goto error;
-			}
-			break;
+        //Group elements:
+        /*
+		case STRING:
+        */
 		case ARRAY:
 			e->type = NULL_TYPE;
 			A_delete_array(&(e->value.arr));
@@ -189,14 +187,21 @@ void T_free_element(T_element *e)
 				goto error;
 			}
 			break;
+        /*
+		case VECTOR:
+		case LINKED_LIST:
+		case STACK:
+		case DICT:
+		case SET:
+        */
 		case NULL_TYPE:
 			error_msg = "Calling T_free_element for a NULL_TYPE element.";
 			goto error;
 			break;
-
 		default:
+			error_msg = "Calling T_free_element for an element with unkown type.";
+			goto error;
 			break;
-			
 	}
 
 result:
@@ -206,7 +211,6 @@ error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
 }
-*/
 
 /*Static functions definitions*/
 static size_t get_element_string_representation_size(T_element e)
