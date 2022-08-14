@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/*
+T_element A_create_array(size_t sz);
+void      A_delete_array(T_array *e);
+size_t    A_get_length(T_element e);
+T_element A_get_element_at_index(size_t i, T_element e);
+void      A_set_element_at_index(size_t i, T_element e);
+*/
 
 
 //Definitions of functions:
@@ -51,6 +58,35 @@ T_element A_create_array(size_t sz)
 
 	return e;
 
+error:
+	fprintf(stderr, error_msg);
+	exit(EXIT_FAILURE);
+}
+
+
+void A_delete_array(T_array **p_arr)
+/*
+ * Description: this function must be called to delete an T_array pointed by *p_arr.
+ * It deallocates the memory that was allocated for that array. After deleting the array,
+ * the pointer *p_arr is pointed to NULL;
+ */
+{
+    int i = 0;
+	char *error_msg;
+    T_element tmp_e;
+
+    T_array *arr = *p_arr;
+    *p_arr = NULL;
+
+    //Free each element
+    for(; i < arr->length; i++)
+    {
+        tmp_e = arr->array[i];
+        if(tmp_e.type != NULL_TYPE) T_free_element(&tmp_e);
+    }
+
+    free(arr->array);
+    free(arr);
 error:
 	fprintf(stderr, error_msg);
 	exit(EXIT_FAILURE);
