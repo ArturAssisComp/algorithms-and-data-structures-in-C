@@ -9,6 +9,14 @@
 static size_t get_element_string_representation_size(T_element e);
 
 //Function definitions:
+void T_print(char *prefix, T_element e, char *suffix)
+{
+    char *tmp_str;
+    tmp_str = T_to_string(e);
+    printf("%s%s%s", prefix, tmp_str, suffix);
+    free(tmp_str);
+}
+
 char *T_to_string(T_element e)
 /*
  * Description: this function returns a allocated string with the string representation
@@ -49,21 +57,32 @@ char *T_to_string(T_element e)
             snprintf(result, string_size + 1, "%s", e.value.b ? "true":"false");
 			break;
 		case CHAR:
-            snprintf(result, string_size + 1, "%c", e.value.c);
+            snprintf(result, string_size + 1, "\'%c\'", e.value.c);
 			break;
 		case STRING:
-            snprintf(result, string_size + 1, "%s", e.value.str->str);
+            snprintf(result, string_size + 1, "\"%s\"", e.value.str->str);
 			break;
 		case ARRAY:
             result[0] = '\0';
-            for(i = 0; i < A_get_length(e); i++)
+            strcat(result, "[");
+            if(A_get_length(e) > 0)
             {
+                tmp_element = A_get_element_at_index(0, e);
+                tmp_str = T_to_string(tmp_element);
+                strncat(result, tmp_str, string_size - strlen(result));
+                free(tmp_str);
+                tmp_str = NULL;
+            }
+            for(i = 1; i < A_get_length(e); i++)
+            {
+                strcat(result, ", ");
                 tmp_element = A_get_element_at_index(i, e);
                 tmp_str = T_to_string(tmp_element);
                 strncat(result, tmp_str, string_size - strlen(result));
                 free(tmp_str);
                 tmp_str = NULL;
             }
+            strcat(result, "]");
             break;
 		case NULL_TYPE:
             snprintf(result, string_size + 1, "NULL");
@@ -160,8 +179,6 @@ void T_free_element(T_element *e)
 {
 	//Variables:
 	char *error_msg;
-	T_linked_list *current_linked_list;
-	int i;
 
 	//Free the values:
 	switch (e->type)
@@ -179,8 +196,8 @@ void T_free_element(T_element *e)
 		case STRING:
         */
 		case ARRAY:
-			e->type = NULL_TYPE;
 			A_delete_array(&(e->value.arr));
+			e->type = NULL_TYPE;
 			if(e->value.arr)
 			{
 				error_msg = "Problems while deleting the array.";
@@ -220,7 +237,7 @@ static size_t get_element_string_representation_size(T_element e)
  */
 {
 	//Variables:
-	size_t result;
+	size_t result = 0;
 	char *error_msg;
     int i;
 
@@ -228,28 +245,30 @@ static size_t get_element_string_representation_size(T_element e)
 	switch (e.type)
 	{
 		case UNSIGNED_INTEGER:
-			result = (size_t) log10((double) e.value.u_i) + 1;
+            if(e.value.u_i == 0) result = 1;
+            else result = (size_t) log10((double) e.value.u_i) + 1;
 			break;
 		case INTEGER:
-			result = (size_t) log10((double) e.value.i) + 1;
+            if(e.value.i == 0) result = 1;
+            else result = (size_t) log10((double) (e.value.i > 0 ? e.value.i : - e.value.i)) + 1;
 			break;
 		case FLOATING_POINT:
-			result = 40; //Graranteedly greater than the maximum
+			result = 40; //Guaranteedly greater than the maximum
 			break;
 		case BOOL:
 			result = sizeof "false" - 1;
 			break;
 		case CHAR:
-			result = 1;
+			result = 3;
 			break;
 		case STRING:
-			result = e.value.str->length;
+			result = 2 + e.value.str->length;
 			break;
 		case ARRAY:
             result = 0;
             for(i = 0; i < A_get_length(e); i++)
             {
-                result += get_element_string_representation_size(A_get_element_at_index(i, e));
+                result += 2 + get_element_string_representation_size(A_get_element_at_index(i, e));
             }
             break;
 		case NULL_TYPE:

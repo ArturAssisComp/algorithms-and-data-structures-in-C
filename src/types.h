@@ -125,6 +125,7 @@ struct T_set
 typedef struct T_set T_set;
 
 //Function declarations:
+void T_print(char *prefix, T_element e, char *suffix);
 char *T_to_string(T_element e);
 bool T_is_equal(T_element e1, T_element e2);
 void T_free_element(T_element *e);
