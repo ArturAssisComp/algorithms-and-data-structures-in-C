@@ -1,5 +1,6 @@
 objects = src/types.o src/array.o
 ctest_files = ext/ctest_lib/lib/ctest.a ext/ctest_lib/include/ctest.h  ext/ctest_lib/include/ctest_functions.h ext/ctest_lib/include/globals.h ext/ctest_lib/include/assert.h ext/ctest_lib/include/std_assert_macro.h
+ctest_a = ext/ctest_lib/lib/ctest.a
 
 
 
@@ -30,8 +31,16 @@ install: build_test
 clean:
 	rm -fr ./build $(objects)
 
-test:
-	echo
+test: $(objects)
+	 
+	objcopy --redefine-sym T_is_equal=_T_is_equal src/types.o
+	objcopy --redefine-sym T_free_element=_T_free_element src/types.o
+	objcopy --redefine-sym A_create_array=_A_create_array src/types.o
+	objcopy --redefine-sym A_delete_array=_A_delete_array src/types.o
+	objcopy --redefine-sym A_create_array=_A_create_array src/array.o
+	objcopy --redefine-sym A_delete_array=_A_delete_array src/array.o
+	cc -g -lm -o build/test/test_basic_types test/test_basic_types.c $(ctest_a) $(objects)
+
 
 debug: create_lib build_debug
 	cc -g -lm debug/debug_main.c build/algorithms.a -o build/debug/debug_main
